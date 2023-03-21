@@ -129,6 +129,7 @@ void ImagePublisher::doWork()
 {
   // If the image is empty retry loading the image from the filename
   if (image_.empty() && retry_) {
+    RCLCPP_INFO(this->get_logger(), "ImagePublisher::onInit()");
     ImagePublisher::onInit();
   }
   // Transform the image.
@@ -136,6 +137,9 @@ void ImagePublisher::doWork()
     if (cap_.isOpened()) {
       if (!cap_.read(image_)) {
         cap_.set(cv::CAP_PROP_POS_FRAMES, 0);
+        RCLCPP_INFO(this->get_logger(), "cap_.read(image_)  FALSE");
+      } else {
+        RCLCPP_INFO(this->get_logger(), "cap_.read(image_)  OK");
       }
     }
     if (flip_image_) {
@@ -150,6 +154,7 @@ void ImagePublisher::doWork()
     camera_info_.header.stamp = out_img->header.stamp;
 
     pub_.publish(*out_img, camera_info_);
+     RCLCPP_INFO(this->get_logger(), "publish");
   } catch (cv::Exception & e) {
     RCLCPP_ERROR(
       this->get_logger(), "Image processing error: %s %s %s %i",
