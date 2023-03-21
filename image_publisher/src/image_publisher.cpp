@@ -52,7 +52,9 @@ using namespace std::chrono_literals;
 ImagePublisher::ImagePublisher(const rclcpp::NodeOptions & options)
 : rclcpp::Node("ImagePublisher", options)
 {
-  pub_ = image_transport::create_camera_publisher(this, "image_raw");
+  rclcpp::QoS qos(1);
+  auto rmw_qos_profile = qos.get_rmw_qos_profile();
+  pub_ = image_transport::create_camera_publisher(this, "image_raw", rmw_qos_profile);
 
   flip_horizontal_ = this->declare_parameter("flip_horizontal", false);
   flip_vertical_ = this->declare_parameter("flip_vertical", false);
